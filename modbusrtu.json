@@ -1,0 +1,274 @@
+[
+    {
+        "id": "2138310af25660b3",
+        "type": "tab",
+        "label": "Mobbus TCP-RTU",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3",
+        "type": "modbus-flex-getter",
+        "z": "2138310af25660b3",
+        "name": "Modbus Flex Getter",
+        "showStatusActivities": true,
+        "showErrors": true,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "server": "0e05e778d3b14010",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": true,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 850,
+        "y": 320,
+        "wires": [
+            [
+                "199f3fc6b26914e3",
+                "bdb67641fefe4678"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "0b700f99df86d17c",
+        "type": "debug",
+        "z": "2138310af25660b3",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1040,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d3ed9c040d0918a6",
+        "type": "debug",
+        "z": "2138310af25660b3",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "493289b446357b33",
+        "type": "modbus-flex-server",
+        "z": "2138310af25660b3",
+        "name": "flex server Victron In",
+        "logEnabled": false,
+        "serverAddress": "172.16.103.235",
+        "serverPort": "5020",
+        "responseDelay": 100,
+        "unitId": 1,
+        "delayUnit": "ms",
+        "coilsBufferSize": 20000,
+        "registersBufferSize": 20000,
+        "minAddress": 0,
+        "splitAddress": 10000,
+        "funcGetCoil": "function getFlexCoil(addr, unitID) {\n\t// console.log('Modbus Server Request:', addr);\n\t// console.log(\"TEsT\");\n\t// node.warn('TEsT');\n\tnode.warn('getFlexCoil');\n\tif (unitID === node.unitId && \n\t\taddr >= node.minAddress && \n\t\taddr <= node.splitAddress) { \n        \n\t\treturn node.coils.readUInt8(addr * node.bufferFactor) \n\t}  \n}\n// console.log(\"TEsT\");\n// node.warn('TEsT');",
+        "funcGetDiscreteInput": "function getFlexDiscreteInput(addr, unitID) {\n\t// console.debug('Modbus Server Request:', addr);\n\t// console.log(\"TEsT\");\n\t// node.warn('TEsT');\n\tnode.warn('getFlexDiscreteInput');\n\taddr += node.splitAddress\n\tif (unitID === node.unitId && \n\t\taddr >= node.splitAddress && \n\t\taddr <= node.splitAddress * 2) { \n\n\t\treturn node.coils.readUInt8(addr * node.bufferFactor) \n\t}  \n}\n// console.log(\"TEsT\");\n// node.warn('TEsT');",
+        "funcGetInputRegister": "function getFlexInputRegister(addr, unitID) { \n\t// console.debug('Modbus Server Request:', addr);\n\t// console.log(\"TEsT\");\n\t// node.warn('TEsT');\n\tnode.warn('getFlexInputRegister');\n\tif (unitID === node.unitId && \n\t\taddr >= node.minAddress && \n\t\taddr <= node.splitAddress) { \n\n\t\treturn node.registers.readUInt16BE(addr * node.bufferFactor)  \n\t} \n\t\n}\n// console.log(\"TEsT\");\n// node.warn('TEsT');",
+        "funcGetHoldingRegister": "function getFlexHoldingRegsiter(addr, unitID) { \n// \tnode.warn('Modbus Server HOLD Request - Address: ' + addr + ', Unit ID: ' + unitID );\n// \tnode.error('Modbus Server HOLD Request - Address: ' + addr + ', Unit ID: ' + unitID );\nlet newMsg = {payload: addr};\n\tnode.send(newMsg);\n// \tvar addrList = global.get('addressList') || [];  // get the current list of addresses\n//     addrList.push(addr);  // add the new address to the list\n//     global.set('addressList', addrList); \n// \tvar addrList = global.get('addressList') || [];\n// \tnode.warn(global.get('addressList') || []);\n\taddr += node.splitAddress\n\tif (unitID === node.unitId && \n\t\taddr >= node.splitAddress && \n\t\taddr <= node.splitAddress * 2) { \n       \n\t\treturn node.registers.readUInt16BE(addr * node.bufferFactor)  \n\t} \n}\n// function getFlexHoldingRegsiter(addr, unitID, clientId) {\n// \tnode.warn('Modbus Server Request - Address: ' + addr + ', Unit ID: ' + unitID + ', Client ID: ' + clientId);\n\n// \taddr += node.splitAddress;\n\n// \tif (unitID === node.unitId && addr >= node.splitAddress && addr <= node.splitAddress * 2) {\n// \t\treturn node.registers.readUInt16BE(addr * node.bufferFactor);\n// \t}\n// }\n",
+        "funcSetCoil": "function setFlexCoil(addr, value, unitID) { \n\t// console.debug('Modbus Server Request:', addr);\n\t// console.log(\"TEsT\");\n\t// node.warn('TEsT');\n\tnode.warn('Setcoil');\n\tif (unitID === node.unitId && \n\t\taddr >= node.minAddress && \n\t\taddr <= node.splitAddress) { \n\n\t\tnode.coils.writeUInt8(value, addr * node.bufferFactor)  \n\t} \n}\n// console.log(\"TEsT\");\n// node.warn('TEsT');",
+        "funcSetRegister": "function setFlexRegister(addr, value, unitID) { \n\t// console.debug('Modbus Server Request:', addr);\n\t// console.log(\"TEsT\");\n\t// node.warn('TEsT');\n\tnode.warn('setRegister');\n\taddr += node.splitAddress\n\tif (unitID === node.unitId && \n\t\taddr >= node.splitAddress && \n\t\taddr <= node.splitAddress * 2) { \n\n\t\tnode.registers.writeUInt16BE(value, addr * node.bufferFactor)  \n\t} \n}\n// console.log(\"TEsT\");\n// node.warn('TEsT');",
+        "showErrors": false,
+        "x": 1280,
+        "y": 320,
+        "wires": [
+            [
+                "e1c9acd3605b8043"
+            ],
+            [],
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e1c9acd3605b8043",
+        "type": "switch",
+        "z": "2138310af25660b3",
+        "name": "",
+        "property": "type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "holding",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            },
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "d3ed9c040d0918a6"
+            ],
+            [
+                "5e45c8ebc0d48f4c"
+            ],
+            [
+                "e41ddf0fc5158c91"
+            ]
+        ]
+    },
+    {
+        "id": "40a00bb0702c3afc",
+        "type": "debug",
+        "z": "2138310af25660b3",
+        "name": "debug 11",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "e41ddf0fc5158c91",
+        "type": "debug",
+        "z": "2138310af25660b3",
+        "name": "debug 12",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "5e45c8ebc0d48f4c",
+        "type": "function",
+        "z": "2138310af25660b3",
+        "name": "function 15",
+        "func": "let payload = msg.payload;  // assuming payload is Buffer\nlet unitid = 1;  // read Unit ID\nlet functionCode = 3;  // read function code\nlet startAddress = msg.payload;  // read starting address\nlet quantity = 1;  // read quantity of registers\n\nmsg.payload = {\n    'fc': functionCode,\n    'unitid': unitid,\n    'address': startAddress,\n    'quantity': quantity\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 320,
+        "wires": [
+            [
+                "40a00bb0702c3afc",
+                "3"
+            ]
+        ]
+    },
+    {
+        "id": "199f3fc6b26914e3",
+        "type": "function",
+        "z": "2138310af25660b3",
+        "name": "function 16",
+        "func": "let serial = msg.payload;\n\n\n\nmsg.payload = {\"value\":msg.responseBuffer.buffer,\"register\":\"holding\",\"address\":msg.modbusRequest.address,\"disableMsgOutput\":1};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 320,
+        "wires": [
+            [
+                "0b700f99df86d17c",
+                "493289b446357b33"
+            ]
+        ]
+    },
+    {
+        "id": "bdb67641fefe4678",
+        "type": "debug",
+        "z": "2138310af25660b3",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "e755ae9de59976b6",
+        "type": "comment",
+        "z": "2138310af25660b3",
+        "name": "",
+        "info": "",
+        "x": 740,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "0e05e778d3b14010",
+        "type": "modbus-client",
+        "name": "Local",
+        "clienttype": "simpleser",
+        "bufferCommands": true,
+        "stateLogEnabled": true,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "127.0.0.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB0",
+        "serialType": "RTU",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "1",
+        "commandDelay": "100",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true,
+        "showWarnings": true,
+        "showLogs": true
+    }
+]
